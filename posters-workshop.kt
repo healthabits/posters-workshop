@@ -30,6 +30,8 @@ import org.openrndr.extras.imageFit.imageFit
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Rectangle
 import org.openrndr.text.writer
+import tools.dynamicText
+
 fun main() = application {
     class Entry(var smoking: String, var age: Int, var bp: Int, var chole: Int, var risk_factor: Int)
     val table = listOf(
@@ -56,6 +58,7 @@ fun main() = application {
         val archive = localArchive("archives/health-risk/health-risk").iterator()
         var article = archive.next()
         var table_counter= 0
+        val highlight = loadFont("data/fonts/IBMPlexMono-BoldItalic.ttf", 24.0)
 
         val gui = GUI()
         val onNextArticle = Event<LoadedArticle>()
@@ -70,6 +73,7 @@ fun main() = application {
                 }
             }
         }
+
         val composite = compose {
             var background = ColorRGBa.PINK.shade(0.100)
             onNextArticle.listen {
@@ -117,60 +121,142 @@ fun main() = application {
                     drawer.rectangle( 0.0, 220.0, width/4.0, 35.0)
                     drawer.rectangle( 0.0, 420.0, width/2.0-80.0, 35.0)
                     drawer.rectangle( 0.0, 620.0, width/4.0+20.0, 35.0)
-                    drawer.rectangle( 470.0, 20.0, width/4.0, 35.0)
+                    drawer.rectangle( 450.0, 20.0, width/4.0, 35.0)
                     drawer.rectangle( 470.0, 220.0, width/4.0, 35.0)
                     drawer.rectangle( 470.0, 420.0, width/4.0, 35.0)
                     drawer.rectangle( 470.0, 620.0, width/4.0  , 35.0)
+
                     var smoke = table[settings.tableIndex].smoking
                     var age = table[settings.tableIndex].age.toString()
                     var bp = table[settings.tableIndex].bp.toString()
                     var chole = table[settings.tableIndex].chole.toString()
-
+                    val specialWords = setOf("NON","SMOKER", age, bp,chole, "mm", "Hg", "y", "mmol/L")
+                    val otherWords = setOf(table[settings.tableIndex].risk_factor.toString())
+                    val color = listOf(ColorRGBa.GREEN,ColorRGBa.YELLOW,ColorRGBa.BLUE)
                     writer {
                         box = Rectangle(10.0, 23.0, width / 2.0 + 90.0, 25.0)
-                        drawer.fill = ColorRGBa.WHITE
+                        //drawer.fill = ColorRGBa.WHITE
                         newLine()
-                        text("YOU ARE A ")
+                        dynamicText("YOU ARE A ") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[1]
+
+                            } else {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     writer {
                         box = Rectangle(10.0, 230.0, width / 4.0, 25.0)
                         newLine()
-                        text("AT THE AGE OF ")
+
+                        dynamicText("AT THE AGE OF") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[0]
+
+                            } else  {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     writer {
                         box = Rectangle(10.0, 430.0, width / 2.0-80.0, 25.0)
                         newLine()
-                        text("WITH SYSTOLIC PRESSURE AT  ")
+
+                        dynamicText("WITH SYSTOLIC PRESSURE AT") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[2]
+
+                            } else  {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     writer{
                         box = Rectangle(10.0, 630.0, width / 4.0 +20.0, 25.0)
                         newLine()
-                        text("AND CHOLESTEROL AT ")
+
+                        dynamicText("AND CHOLESTEROL AT") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[0]
+
+                            } else {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
 
                     }
                     writer {
-                        box = Rectangle(480.0, 23.0, width / 4.0, 25.0)
+                        box = Rectangle(460.0, 23.0, width / 4.0, 25.0)
                         newLine()
-                        drawer.fill = ColorRGBa.PINK
-                        text(smoke)
+                        dynamicText(smoke) {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[2]
+
+                            } else if (it in otherWords) {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     writer {
                         box = Rectangle(480.0, 230.0, width / 4.0, 25.0)
                         newLine()
-                        drawer.fill = ColorRGBa.GRAY
-                        text(age + "y")
+                        dynamicText(age + " y") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[0]
+
+                            } else if (it in otherWords) {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     writer {3
                         box = Rectangle(480.0, 430.0, width / 4.0, 25.0)
                         newLine()
-                        drawer.fill = ColorRGBa.GREEN
-                        text(bp + "mm Hg")
+                        dynamicText(bp + " mm Hg") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[1]
+
+                            } else if (it in otherWords) {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     writer{
                         box = Rectangle(480.0, 630.0, width / 4.0, 25.0)
                         newLine()
-                        drawer.fill = ColorRGBa.YELLOW
-                        text(chole + "mmol/L")
+                        dynamicText(chole + " mmol/L") {
+                            if (it in specialWords) {
+                                drawer.fontMap = highlight
+                                drawer.fill = color[0]
+
+                            } else if (it in otherWords) {
+                                drawer.fontMap = font
+                                drawer.fill = ColorRGBa.PINK
+
+                            }
+                        }
                     }
                     //var riskCounter = 0
 
@@ -179,13 +265,33 @@ fun main() = application {
                     drawer.rectangle( 190.0, 165.0, width/2.0 - 80.0, height/2.0 - 30.0)
                     writer {
                         box = Rectangle(190.0, 165.0, width/2.0 - 80.0, height/2.0 - 30.0)
-                       
+                        /*for (j in 0 until 10) {
+                            for (i in 0 until 10) {
+
+                                if(value > riskCounter ) {
+                                    drawer.fill = ColorRGBa.RED
+                                }
+                                if(value < riskCounter ) {
+                                    drawer.fill = ColorRGBa.GREEN
+                                }
+                                drawer.circle(i*23.0 + 300.0, j*23.0+150.0, 10.0)
+                                riskCounter = riskCounter + 1
+
+                                /*while(value > 0) {
+
+                                        drawer.fill = ColorRGBa.RED
+                                        drawer.circle(value * 23.0 + 300.0,value * 23.0 + 150.0,10.0)
+                                        value =  value - 1
+
+                                }*/
+                            }*/
+
                         val gradient = radialGradient(ColorRGBa.PINK,ColorRGBa.WHITE)
                         gui.add(gradient)
                         var circleCounter = 0
                         val colors = mutableListOf<ColorRGBa>()
                         var value = table[settings.tableIndex].risk_factor
-
+                        val otherWords = setOf(value.toString())
                         for (i in 0 until value) {
                             colors.add(ColorRGBa.RED)
                         }
@@ -214,7 +320,7 @@ fun main() = application {
                     writer{
 
                         box = Rectangle(165.0, 690.0, width/2.0 - 10.0, 40.0)
-                        drawer.fill = ColorRGBa.WHITE
+                        drawer.fill = ColorRGBa.PINK
                         newLine()
                         text("YOUR CURRENT RISK IS ")
                         drawer.fill = ColorRGBa.RED
@@ -231,7 +337,7 @@ fun main() = application {
 
         extend(Screenshots())     
 		extend {
-            drawer.clear(rgb(Math.random(), Math.random(), Math.random()).shade(0.100))
+            //drawer.clear(rgb(Math.random(), Math.random(), Math.random()).shade(0.100))
             composite.draw(drawer)
 
         }
@@ -239,3 +345,128 @@ fun main() = application {
     }
 
 }
+
+/*package skeletons
+
+import archives.LoadedArticle
+import archives.localArchive
+import org.openrndr.application
+import org.openrndr.color.ColorRGBa
+import org.openrndr.color.rgb
+import org.openrndr.color.rgba
+import org.openrndr.draw.loadFont
+import org.openrndr.events.Event
+import org.openrndr.extra.compositor.compose
+import org.openrndr.extra.compositor.layer
+import org.openrndr.extra.compositor.draw
+import org.openrndr.extra.compositor.post
+import org.openrndr.extra.fx.distort.Perturb
+import org.openrndr.extra.fx.shadow.DropShadow
+import org.openrndr.extra.gui.GUI
+import org.openrndr.extra.gui.addTo
+import org.openrndr.extra.noise.random
+import org.openrndr.extra.parameters.ActionParameter
+import org.openrndr.extra.parameters.Description
+import org.openrndr.extras.imageFit.imageFit
+import org.openrndr.shape.Rectangle
+import org.openrndr.text.writer
+
+fun main() = application {
+    configure {
+        width = 600
+        height = 800
+    }
+    program {
+        val archive = localArchive("archives/example-poetry").iterator()
+        var article = archive.next()
+        val gui = GUI()
+
+        val onNextArticle = Event<LoadedArticle>()
+        val settings = @Description("Settings") object {
+            @ActionParameter("Next article")
+            fun nextArticle() {
+                article = archive.next()
+                onNextArticle.trigger(article)
+            }
+        }
+
+        val composite = compose {
+            var background = ColorRGBa.PINK
+            onNextArticle.listen {
+                background = rgb(Math.random(), Math.random(), Math.random())
+            }
+
+
+            // -- image layer
+            layer {
+                var perturbgain = Math.random()
+                var imageX = 0.0
+                var imageY = 0.0
+                onNextArticle.listen{
+                    perturbgain = Math.random()
+                    imageX = random(0.0,width*1.0)
+                    imageY = random(0.0,width*1.0)
+
+                    imageX = article.texts[0].length * 1.0
+                }
+
+
+
+                draw {
+                    /*if (article.images.isNotEmpty()) {
+                        drawer.imageFit(article.images[0], 0.0, 0.0, width * 1.0, height * 1.0)
+                    }*/
+                    for (image in article.images){
+                        drawer.imageFit(image,0.0,0.0,width*1.0,height*1.0)
+                        drawer.translate(40.0,40.0)
+                    }
+                }
+                /*post(Perturb()){
+                   gain = perturbgain
+                }//.addTo(gui)*/
+
+            }
+            layer{
+                draw{
+                    val radius = article.texts[0].length*1.0
+                    if(article.texts[0].contains("chase")){
+                        drawer.fill = ColorRGBa.RED
+                    }
+                    drawer.circle(width/2.0,height/2.0,20.0)
+                }
+            }
+            /*layer{
+                draw{
+                    val font = loadFont("data/fonts/IBMPlexMono-Bold.ttf",32.0)
+                    drawer.fontMap = font
+                    val lines = article.texts[1].split("\n")
+                    val values = lines[0].split("\t")
+                    drawer.text(values[1],40.0,140.0)
+                    //article.texts[1]
+                }
+            }*/
+            // -- text layer
+            layer {
+                val font = loadFont("data/fonts/IBMPlexMono-Bold.ttf", 32.0)
+                draw {
+                    if (article.texts.isNotEmpty()) {
+                        drawer.fontMap = font
+                        writer {
+                            box = Rectangle(40.0, 40.0, width - 80.0, height - 80.0)
+                            gaplessNewLine()
+                            text(article.texts[0])
+                        }
+                    }
+                }
+                post(DropShadow()).addTo(gui, "2. Drop shadow")
+            }
+        }
+        onNextArticle.trigger(article)
+
+        gui.add(settings)
+        extend(gui)
+        extend {
+            composite.draw(drawer)
+        }
+    }
+} */
