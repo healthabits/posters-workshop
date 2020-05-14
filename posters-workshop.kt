@@ -1,6 +1,8 @@
+// LocalArchiveSkeleton
 package skeletons
 import archives.LoadedArticle
 import archives.localArchive
+import blockGradient
 
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
@@ -22,28 +24,31 @@ import org.openrndr.extra.noise.simplex
 import org.openrndr.extra.parameters.ActionParameter
 import org.openrndr.extra.parameters.Description
 import org.openrndr.extra.parameters.IntParameter
+import org.openrndr.extra.shadestyles.linearGradient
+import org.openrndr.extra.shadestyles.radialGradient
 import org.openrndr.extras.imageFit.imageFit
+import org.openrndr.math.Vector2
 import org.openrndr.shape.Rectangle
 import org.openrndr.text.writer
 fun main() = application {
     class Entry(var smoking: String, var age: Int, var bp: Int, var chole: Int, var risk_factor: Int)
     val table = listOf(
-            Entry("non smoker",58,140,7,1),
-            Entry("smoker",50,180,7,3),
-            Entry("smoker",86,160,7,13),
-            Entry("son smoker",89,180,8,12),
-            Entry("smoker",72,160,8,16),
-            Entry("smoker",75,180,7,19),
-            Entry("non smoker",84,160,8,8),
-            Entry("non smoker",60,120,4,1),
-            Entry("smoker",72,180,8,22),
-            Entry("non smoker",54,120,4,0)
+        Entry("NON SMOKER",58,140,7,1),
+        Entry("SMOKER",50,180,7,3),
+        Entry("SMOKER",86,160,7,13),
+        Entry("NON SMOKER",89,180,8,12),
+        Entry("SMOKER",72,160,8,16),
+        Entry("SMOKER",75,180,7,19),
+        Entry("NON SMOKER",84,160,8,8),
+        Entry("NON SMOKER",60,120,4,1),
+        Entry("SMOKER",72,180,8,22),
+        Entry("NON SMOKER",54,120,4,0)
     )
     configure {
 
         title = "health risk"
         width = 600
-        height = 500
+        height = 800
 
     }
     program {
@@ -51,6 +56,7 @@ fun main() = application {
         val archive = localArchive("archives/health-risk/health-risk").iterator()
         var article = archive.next()
         var table_counter= 0
+
         val gui = GUI()
         val onNextArticle = Event<LoadedArticle>()
         val settings = @Description("Next post") object {
@@ -107,30 +113,78 @@ fun main() = application {
                     // here we visualize the box
                     drawer.fill = ColorRGBa.PINK.shade(0.1)
                     drawer.stroke = ColorRGBa.PINK.shade(0.1)
-                    drawer.rectangle( 0.0, 20.0, 600.0, 85.0)
+                    drawer.rectangle( 0.0, 20.0, width/6.0, 35.0)
+                    drawer.rectangle( 0.0, 220.0, width/4.0, 35.0)
+                    drawer.rectangle( 0.0, 420.0, width/2.0-80.0, 35.0)
+                    drawer.rectangle( 0.0, 620.0, width/4.0+20.0, 35.0)
+                    drawer.rectangle( 470.0, 20.0, width/4.0, 35.0)
+                    drawer.rectangle( 470.0, 220.0, width/4.0, 35.0)
+                    drawer.rectangle( 470.0, 420.0, width/4.0, 35.0)
+                    drawer.rectangle( 470.0, 620.0, width/4.0  , 35.0)
+                    var smoke = table[settings.tableIndex].smoking
+                    var age = table[settings.tableIndex].age.toString()
+                    var bp = table[settings.tableIndex].bp.toString()
+                    var chole = table[settings.tableIndex].chole.toString()
+
                     writer {
-                        box = Rectangle(160.0, 23.0, 390.0, 85.0)
+                        box = Rectangle(10.0, 23.0, width / 2.0 + 90.0, 25.0)
                         drawer.fill = ColorRGBa.WHITE
-
                         newLine()
-                        text("WE HAVE A "+ table[settings.tableIndex].smoking)
-
-                        newLine()
-                        text("AT THE AGE OF "+ table[settings.tableIndex].age.toString()+ " YEARS OLD")
-                        newLine()
-                        text("WITH SYSTOLIC PRESSURE AT  "+ table[settings.tableIndex].bp.toString() + " mm Hg")
-                        newLine()
-                        text("AND CHOLESTEROL AT "+ table[settings.tableIndex].chole.toString()+ " mmol/L")
+                        text("YOU ARE A ")
                     }
-                    var value = table[settings.tableIndex].risk_factor
-                    //var riskCounter = 0
-                    var circleCounter = 0
-                    val colors = mutableListOf<ColorRGBa>()
-                    drawer.fill = ColorRGBa.PINK.shade(0.05)
-                    drawer.stroke = ColorRGBa.PINK.shade(0.05)
-                    drawer.rectangle( 190.0, 165.0, 220.0, 220.0)
                     writer {
-                        box = Rectangle(190.0, 165.0, 220.0, 220.0)
+                        box = Rectangle(10.0, 230.0, width / 4.0, 25.0)
+                        newLine()
+                        text("AT THE AGE OF ")
+                    }
+                    writer {
+                        box = Rectangle(10.0, 430.0, width / 2.0-80.0, 25.0)
+                        newLine()
+                        text("WITH SYSTOLIC PRESSURE AT  ")
+                    }
+                    writer{
+                        box = Rectangle(10.0, 630.0, width / 4.0 +20.0, 25.0)
+                        newLine()
+                        text("AND CHOLESTEROL AT ")
+
+                    }
+                    writer {
+                        box = Rectangle(480.0, 23.0, width / 4.0, 25.0)
+                        newLine()
+                        drawer.fill = ColorRGBa.PINK
+                        text(smoke)
+                    }
+                    writer {
+                        box = Rectangle(480.0, 230.0, width / 4.0, 25.0)
+                        newLine()
+                        drawer.fill = ColorRGBa.GRAY
+                        text(age + "y")
+                    }
+                    writer {3
+                        box = Rectangle(480.0, 430.0, width / 4.0, 25.0)
+                        newLine()
+                        drawer.fill = ColorRGBa.GREEN
+                        text(bp + "mm Hg")
+                    }
+                    writer{
+                        box = Rectangle(480.0, 630.0, width / 4.0, 25.0)
+                        newLine()
+                        drawer.fill = ColorRGBa.YELLOW
+                        text(chole + "mmol/L")
+                    }
+                    //var riskCounter = 0
+
+                    drawer.fill = null
+                    drawer.stroke = null
+                    drawer.rectangle( 190.0, 165.0, width/2.0 - 80.0, height/2.0 - 30.0)
+                    writer {
+                        box = Rectangle(190.0, 165.0, width/2.0 - 80.0, height/2.0 - 30.0)
+                       
+                        val gradient = radialGradient(ColorRGBa.PINK,ColorRGBa.WHITE)
+                        gui.add(gradient)
+                        var circleCounter = 0
+                        val colors = mutableListOf<ColorRGBa>()
+                        var value = table[settings.tableIndex].risk_factor
 
                         for (i in 0 until value) {
                             colors.add(ColorRGBa.RED)
@@ -142,10 +196,10 @@ fun main() = application {
                         for (j in 0 until 10) {
                             for (i in 0 until 10) {
                                 drawer.fill = colors[circleCounter]
-
+                                drawer.shadeStyle=gradient
                                 // -- rotate
 
-                                drawer.circle(i * 23.0 + 195.0,j * 23.0 + 170.0,10.0)
+                                drawer.circle(i * 23.0 + 195.0,j * 63.0 + 40.0,(simplex(i*50 + j*63, seconds*0.5) + 1.0) * 20.0 )
                                 circleCounter++
                             }
                         }
@@ -153,16 +207,18 @@ fun main() = application {
                     }
                     val fonts = loadFont("data/fonts/IBMPlexMono-Bold.ttf", 25.0)
                     drawer.fontMap = fonts
-
+                    drawer.shadeStyle = null
                     drawer.fill = ColorRGBa.PINK.shade(0.1)
                     drawer.stroke = ColorRGBa.PINK
-                    drawer.rectangle( 0.0, 450.0, 600.0, 40.0)
+                    drawer.rectangle( 0.0, 680.0, width*1.0, 50.0)
                     writer{
 
-                        box = Rectangle(165.0, 453.0, 280.0, 40.0)
+                        box = Rectangle(165.0, 690.0, width/2.0 - 10.0, 40.0)
                         drawer.fill = ColorRGBa.WHITE
                         newLine()
-                        text("CURRENT RISK IS AT "+ table[settings.tableIndex].risk_factor.toString() +" %")
+                        text("YOUR CURRENT RISK IS ")
+                        drawer.fill = ColorRGBa.RED
+                        text(table[settings.tableIndex].risk_factor.toString() +" %")
                     }
                 }
             }
@@ -172,8 +228,9 @@ fun main() = application {
         onNextArticle.trigger(article)
         gui.add(settings)
         extend(gui)
-        extend(Screenshots())
-        extend {
+
+        extend(Screenshots())     
+		extend {
             drawer.clear(rgb(Math.random(), Math.random(), Math.random()).shade(0.100))
             composite.draw(drawer)
 
