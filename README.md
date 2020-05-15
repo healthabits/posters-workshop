@@ -10,4 +10,6 @@
 
 ## Image analysis
 
-![](examples.Imagecontext001-2020-05-15-11.47.34.png)
+![](texthighlight.png)
+
+![](texthighlight2.png)
