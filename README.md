@@ -16,6 +16,7 @@
 
 ## TODO
 
+- [x] change image when pressing next button
 - [x] change input text
 - [x] highlight text based on the most dominant colors in the image
 - [ ] change images while changing input text
