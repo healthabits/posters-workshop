@@ -1,11 +1,8 @@
 # posters-workshop
 
 ## Examples
-![](poster5.png)
+![](skeletons.GoogleNewsSkeleton_ncd-2020-05-15-09.48.36.png)
 
-![](poster6.png)
+![](skeletons.GoogleNewsSkeleton_ncd-2020-05-15-10.33.00.png)
 
-## Image Analysis
-![](poster7.png)
-
-![](poster8.png)
+![](skeletons.GoogleNewsSkeleton_ncd-2020-05-15-10.54.39.png)
