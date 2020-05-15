@@ -13,3 +13,9 @@
 ![](texthighlight.png)
 
 ![](texthighlight2.png)
+
+## TODO
+
+- [ x ] change input text
+- [ x ] highlight text based on the most dominant colors in the image
+- [ ] change images while changing input text
